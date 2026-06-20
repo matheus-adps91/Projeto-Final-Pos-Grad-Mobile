@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "721081273118",
+    "project_id": "todolist-85996",
+    "storage_bucket": "todolist-85996.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:721081273118:android:8127f212753c174a96170f",
+        "android_client_info": {
+          "package_name": "com.neptum.todolistapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkNGioyQb1BENHMmVjoDGqR0-1k1O0n0Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
