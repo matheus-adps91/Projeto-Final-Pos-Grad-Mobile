@@ -1,16 +1,41 @@
 package com.neptum.todolistapp.data.repository
 
+import com.google.firebase.auth.FirebaseUser
 import com.neptum.todolistapp.data.datasource.FireauthDataSource
 import com.neptum.todolistapp.domain.model.User
 import com.neptum.todolistapp.repository.UserRepository
+import kotlinx.coroutines.tasks.await
 
 class FireauthUserRepository(
     private val fireAuthDataSource: FireauthDataSource
 ): UserRepository {
-    override fun createUser(user: User) {
-        fireAuthDataSource
-            .auth
-            .createUserWithEmailAndPassword(user.email, user.password)
+    override suspend fun createUser(user: User): Result<FirebaseUser> {
+        return try {
+            val authResult =
+                fireAuthDataSource
+                    .auth
+                    .createUserWithEmailAndPassword(
+                        user.email, user.password)
+                    .await()
+            Result.success(authResult.user!!)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
+    override suspend fun logIn(
+        email: String,
+        password: String
+    ): Result<FirebaseUser> {
+        return try {
+            val authResult =
+                fireAuthDataSource
+                    .auth
+                    .signInWithEmailAndPassword(email, password)
+                    .await()
+            Result.success(authResult.user!!)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

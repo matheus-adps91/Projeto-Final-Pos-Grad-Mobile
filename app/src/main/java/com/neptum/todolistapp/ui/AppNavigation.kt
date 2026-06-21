@@ -5,8 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.neptum.todolistapp.ui.home.HomeScreen
 import com.neptum.todolistapp.ui.login.LoginScreen
-import com.neptum.todolistapp.ui.signin.SignUpScreen
+import com.neptum.todolistapp.ui.signup.SignUpScreen
 
 @Composable
 fun AppNavigation(
@@ -22,12 +23,18 @@ fun AppNavigation(
         composable(Screen.Login.route) {
             LoginScreen(
                 navController,
-                paddingValues = innerPadding
             )
         }
 
         composable(Screen.SignUp.route) {
             SignUpScreen(
+                navController,
+                paddingValues = innerPadding
+            )
+        }
+
+        composable(Screen.Home.route) {
+            HomeScreen(
                 navController,
                 paddingValues = innerPadding
             )
