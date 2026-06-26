@@ -3,7 +3,7 @@ package com.neptum.todolistapp.ui.signup
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.neptum.todolistapp.domain.model.User
-import com.neptum.todolistapp.domain.usecase.CreateUserUseCase
+import com.neptum.todolistapp.domain.usecase.user.CreateUserUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch

@@ -7,4 +7,6 @@ interface UserRepository {
     suspend fun createUser(user: User): Result<FirebaseUser>
 
     suspend fun logIn(email: String, password: String): Result<FirebaseUser>
+
+    suspend fun logOut(): Result<Unit>
 }

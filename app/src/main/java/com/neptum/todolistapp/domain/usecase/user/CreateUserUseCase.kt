@@ -1,4 +1,4 @@
-package com.neptum.todolistapp.domain.usecase
+package com.neptum.todolistapp.domain.usecase.user
 
 import com.google.firebase.auth.FirebaseUser
 import com.neptum.todolistapp.domain.model.User
