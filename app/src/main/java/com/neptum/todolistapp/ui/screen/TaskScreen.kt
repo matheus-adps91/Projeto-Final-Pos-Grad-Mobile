@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -16,6 +17,7 @@ import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,38 +39,59 @@ fun TaskList(
         items(state.tasks, key = { it.id }) { task ->
             val dismissState = rememberSwipeToDismissBoxState(
                 confirmValueChange = {
-                    if (it == SwipeToDismissBoxValue.EndToStart) {
-                        onDelete(task)
-                        true
-                    } else {
-                        false
+                    when (it) {
+                        SwipeToDismissBoxValue.EndToStart -> {
+                            onDelete(task)
+                            true
+                        }
+                        SwipeToDismissBoxValue.StartToEnd -> {
+                            onEdit(task)
+                            false
+                        }
+                        else -> false
                     }
                 }
             )
 
             SwipeToDismissBox(
                 state = dismissState,
-                enableDismissFromStartToEnd = false,
+                enableDismissFromStartToEnd = true,
                 backgroundContent = {
                     val color by animateColorAsState(
                         when (dismissState.targetValue) {
                             SwipeToDismissBoxValue.EndToStart -> Color.Red.copy(alpha = 0.8f)
+                            SwipeToDismissBoxValue.StartToEnd -> Color.Blue.copy(alpha = 0.8f)
                             else -> Color.Transparent
                         }, label = "dismissBackground"
                     )
+                    
+                    val alignment = when (dismissState.targetValue) {
+                        SwipeToDismissBoxValue.EndToStart -> Alignment.CenterEnd
+                        SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
+                        else -> Alignment.Center
+                    }
+
+                    val icon = when (dismissState.targetValue) {
+                        SwipeToDismissBoxValue.EndToStart -> Icons.Default.Delete
+                        SwipeToDismissBoxValue.StartToEnd -> Icons.Default.Edit
+                        else -> null
+                    }
+
                     Box(
                         Modifier
                             .fillMaxSize()
                             .padding(horizontal = 16.dp, vertical = 8.dp)
                             .background(color, shape = MaterialTheme.shapes.medium),
-                        contentAlignment = Alignment.CenterEnd
+                        contentAlignment = alignment
                     ) {
-                        Icon(
-                            Icons.Default.Delete,
-                            contentDescription = "Deletar",
-                            modifier = Modifier.padding(end = 16.dp),
-                            tint = Color.White
-                        )
+                        icon?.let {
+                            Icon(
+                                it,
+                                contentDescription = if (dismissState.targetValue == SwipeToDismissBoxValue.EndToStart) "Deletar" else "Editar",
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                tint = Color.White
+                            )
+                        }
                     }
                 },
                 modifier = Modifier.animateItem()

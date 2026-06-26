@@ -20,17 +20,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.neptum.todolistapp.domain.model.Task
 import com.neptum.todolistapp.ui.home.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun TaskFormCard(
     viewModel: HomeViewModel = koinViewModel(),
+    task: Task? = null,
     onDismiss: () -> Unit
 ) {
 
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
+    var title by remember { mutableStateOf(task?.title ?: "") }
+    var description by remember { mutableStateOf(task?.description ?: "") }
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -46,7 +48,7 @@ fun TaskFormCard(
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
-                    text = "Nova Tarefa",
+                    text = if (task == null) "Nova Tarefa" else "Editar Tarefa",
                     style = MaterialTheme.typography.titleLarge
                 )
                 Spacer(
@@ -73,7 +75,12 @@ fun TaskFormCard(
                 )
                 Button(
                     onClick = {
-                        viewModel.insertTask(title, description)
+                        viewModel.saveTask(
+                            id = task?.id,
+                            title = title,
+                            description = description,
+                            finished = task?.finished ?: false
+                        )
                         onDismiss()
                     },
                     modifier = Modifier.align(Alignment.End)

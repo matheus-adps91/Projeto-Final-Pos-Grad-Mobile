@@ -74,14 +74,20 @@ fun HomeScreen(
             }
         }
     ) { innerPadding ->
-        if (showTaskCard) {
-            TaskFormCard(onDismiss = { showTaskCard = false })
+        if (showTaskCard || state.editingTask != null) {
+            TaskFormCard(
+                task = state.editingTask,
+                onDismiss = {
+                    showTaskCard = false
+                    viewModel.setEditingTask(null)
+                }
+            )
         }
 
         Box(modifier = Modifier.padding(innerPadding)) {
             TaskList(
                 state,
-                onEdit = {  },
+                onEdit = { viewModel.setEditingTask(it) },
                 onDelete = { viewModel.deleteTask(it.id) },
                 onToggleStatus = viewModel::toggleTaskStatus
             )

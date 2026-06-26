@@ -58,6 +58,39 @@ class HomeViewModel(
         }
     }
 
+    fun saveTask(
+        id: String?,
+        title: String,
+        description: String,
+        finished: Boolean = false
+    ) {
+        viewModelScope.launch {
+            if (id == null) {
+                val task = Task(
+                    id = UUID.randomUUID().toString(),
+                    title = title,
+                    description = description,
+                    finished = finished
+                )
+                insertTaskUseCase(task)
+            } else {
+                val task = Task(
+                    id = id,
+                    title = title,
+                    description = description,
+                    finished = finished
+                )
+                updateTaskUseCase(task)
+            }
+            _events.emit(HomeEvent.TaskSaved)
+            setEditingTask(null)
+        }
+    }
+
+    fun setEditingTask(task: Task?) {
+        state = state.copy(editingTask = task)
+    }
+
     fun toggleTaskStatus(task: Task) {
         viewModelScope.launch {
             val updatedTask = task.copy(finished = !task.finished)
