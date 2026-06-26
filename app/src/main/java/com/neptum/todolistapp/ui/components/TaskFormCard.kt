@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.neptum.todolistapp.domain.model.Task
 import com.neptum.todolistapp.ui.home.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -34,16 +35,12 @@ fun TaskFormCard(
     var title by remember { mutableStateOf(task?.title ?: "") }
     var description by remember { mutableStateOf(task?.description ?: "") }
 
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
+    Dialog(onDismissRequest = onDismiss) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-
             Column(
                 modifier = Modifier.padding(16.dp)
             ) {
