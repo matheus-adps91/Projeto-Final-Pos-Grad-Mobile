@@ -7,34 +7,14 @@ import com.neptum.todolistapp.data.mapper.toDomain
 import com.neptum.todolistapp.data.mapper.toTaskFirebaseDto
 import com.neptum.todolistapp.domain.model.Task
 import com.neptum.todolistapp.repository.TaskRepository
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.callbackFlow
 
 class FirebaseTaskRepositoryImpl(
     private val dataSource: FirebaseDataSource,
     private val auth: FirebaseAuth,
 ): TaskRepository {
-
-    private val tasks = MutableStateFlow<List<Task>>(emptyList())
-
-    init {
-        observeTasks()
-    }
-
-    private fun observeTasks() {
-        val user = auth.currentUser ?: return
-        dataSource.getUserTasksCollection(user.uid).addSnapshotListener { snapshots, _ ->
-            if (snapshots == null) return@addSnapshotListener
-
-            val list = snapshots.documents.mapNotNull { document ->
-                document
-                    .toObject(TaskFirebaseDto::class.java)
-                    ?.toDomain()
-            }
-
-            tasks.value = list
-        }
-    }
 
     override suspend fun createTask(task: Task) {
         val user = auth.currentUser ?: return
@@ -53,7 +33,31 @@ class FirebaseTaskRepositoryImpl(
         dataSource.deleteTask(user.uid, taskId)
     }
 
-    override fun getTasks(): Flow<List<Task>> {
-        return tasks
+    override fun getTasks(): Flow<List<Task>> = callbackFlow {
+        val user = auth.currentUser
+        if (user == null) {
+            trySend(emptyList())
+            close()
+            return@callbackFlow
+        }
+
+        val listener = dataSource.getUserTasksCollection(user.uid).addSnapshotListener { snapshots, _ ->
+            if (snapshots == null) {
+                trySend(emptyList())
+                return@addSnapshotListener
+            }
+
+            val list = snapshots.documents.mapNotNull { document ->
+                document
+                    .toObject(TaskFirebaseDto::class.java)
+                    ?.toDomain()
+            }
+
+            trySend(list)
+        }
+
+        awaitClose {
+            listener.remove()
+        }
     }
 }
