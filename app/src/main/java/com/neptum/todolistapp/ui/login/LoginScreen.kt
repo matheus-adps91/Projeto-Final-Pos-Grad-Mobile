@@ -101,6 +101,14 @@ fun LoginScreen(
             ) {
                 Text(text = "Novo Usuário")
             }
+            Spacer(
+                modifier = Modifier.height(24.dp)
+            )
+            Button(
+                onClick = { navController.navigate(Screen.RecoveredPassword.route)}
+            ) {
+                Text(text = "Esqueci a senha")
+            }
         }
     }
 

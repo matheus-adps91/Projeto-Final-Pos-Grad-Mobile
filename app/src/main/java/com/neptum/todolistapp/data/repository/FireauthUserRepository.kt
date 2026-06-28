@@ -11,7 +11,9 @@ class FireauthUserRepository(
     private val fireAuthDataSource: FireauthDataSource,
     private val firebaseDataSource: FirebaseDataSource,
 ): UserRepository {
-    override suspend fun createUser(user: User): Result<FirebaseUser> {
+    override suspend fun createUser(
+        user: User
+    ): Result<FirebaseUser> {
         return try {
             val authResult =
                 fireAuthDataSource
@@ -47,6 +49,21 @@ class FireauthUserRepository(
     override suspend fun logOut(): Result<Unit> {
         return try {
             fireAuthDataSource.auth.signOut()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun sendPasswordByEmail(
+        email: String
+    ): Result<Unit> {
+        return try {
+            fireAuthDataSource
+                .auth
+                .sendPasswordResetEmail(
+                    email)
+                .await()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
