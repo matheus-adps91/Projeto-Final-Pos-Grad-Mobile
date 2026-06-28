@@ -24,6 +24,8 @@ import androidx.compose.ui.window.Dialog
 import com.neptum.todolistapp.domain.model.Task
 import com.neptum.todolistapp.ui.home.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun TaskFormCard(
@@ -34,6 +36,11 @@ fun TaskFormCard(
 
     var title by remember { mutableStateOf(task?.title ?: "") }
     var description by remember { mutableStateOf(task?.description ?: "") }
+    var dateTime by remember { mutableStateOf(LocalDateTime.now()) }
+    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+
+    var showDatePicker by remember { mutableStateOf(false) }
+    var showTimePicker by remember { mutableStateOf(false) }
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
@@ -70,6 +77,37 @@ fun TaskFormCard(
                 Spacer(
                     modifier = Modifier.height(16.dp)
                 )
+                DateTimeField(
+                    dateTime = dateTime.format(formatter),
+                    onClick = {
+                        showDatePicker = true
+                    }
+                )
+
+                if (showDatePicker) {
+                    DatePickerDialogComponent(
+                        onDateSelected = { selected ->
+                            dateTime = selected
+                        },
+                        onDismiss = {
+                            showDatePicker = false
+                            showTimePicker = true
+                        })
+                }
+
+                if (showTimePicker) {
+                    TimePickerDialogComponent(
+                        onTimeSelected = { hour, minute ->
+                            dateTime = dateTime.withHour(hour).withMinute(minute)
+                        },
+                        onDismiss = { showTimePicker = false }
+                    )
+                }
+
+                Spacer(
+                    modifier = Modifier.height(16.dp)
+                )
+
                 Button(
                     onClick = {
                         viewModel.saveTask(
