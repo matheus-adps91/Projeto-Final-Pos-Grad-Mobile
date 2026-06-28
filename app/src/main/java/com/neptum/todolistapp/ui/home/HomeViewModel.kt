@@ -14,6 +14,7 @@ import com.neptum.todolistapp.domain.usecase.task.DeleteTaskUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import java.util.UUID
 
 class HomeViewModel(
@@ -42,27 +43,12 @@ class HomeViewModel(
         }
     }
 
-    fun insertTask(
-        title: String,
-        description: String,
-    ) {
-        viewModelScope.launch {
-            val task = Task(
-                id = UUID.randomUUID().toString(),
-                title = title,
-                description = description,
-                finished = false
-            )
-            insertTaskUseCase(task)
-            _events.emit(HomeEvent.TaskSaved)
-        }
-    }
-
     fun saveTask(
         id: String?,
         title: String,
         description: String,
-        finished: Boolean = false
+        finished: Boolean = false,
+        finishDateTime: LocalDateTime
     ) {
         viewModelScope.launch {
             if (id == null) {
@@ -70,7 +56,8 @@ class HomeViewModel(
                     id = UUID.randomUUID().toString(),
                     title = title,
                     description = description,
-                    finished = finished
+                    finished = finished,
+                    finishDateTime = finishDateTime
                 )
                 insertTaskUseCase(task)
             } else {
@@ -78,7 +65,8 @@ class HomeViewModel(
                     id = id,
                     title = title,
                     description = description,
-                    finished = finished
+                    finished = finished,
+                    finishDateTime = finishDateTime
                 )
                 updateTaskUseCase(task)
             }

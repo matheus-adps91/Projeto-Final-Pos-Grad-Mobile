@@ -114,7 +114,8 @@ fun TaskFormCard(
                             id = task?.id,
                             title = title,
                             description = description,
-                            finished = task?.finished ?: false
+                            finished = task?.finished ?: false,
+                            finishDateTime = dateTime!!
                         )
                         onDismiss()
                     },

@@ -62,6 +62,12 @@ fun TaskCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textDecoration = if (task.finished) TextDecoration.LineThrough else null
                 )
+                Text(
+                    text = "Data de término: "
+                )
+                Text(
+                    text = task.finishDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")),
+                )
             }
             
             Spacer(modifier = Modifier.width(16.dp))
