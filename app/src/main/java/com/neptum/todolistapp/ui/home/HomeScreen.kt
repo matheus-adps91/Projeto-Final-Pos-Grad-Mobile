@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,6 +25,7 @@ import androidx.navigation.NavHostController
 import com.neptum.todolistapp.ui.Screen
 import com.neptum.todolistapp.ui.components.TaskFormCard
 import com.neptum.todolistapp.ui.screen.TaskList
+import com.neptum.todolistapp.ui.session.SessionViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,15 +33,25 @@ import org.koin.androidx.compose.koinViewModel
 fun HomeScreen(
     navController: NavHostController,
     paddingValues: PaddingValues,
-    viewModel: HomeViewModel = koinViewModel()
+    homeViewModel: HomeViewModel = koinViewModel(),
+    sessionViewModel: SessionViewModel = koinViewModel()
 ) {
-    val events = viewModel.events
-    val state = viewModel.state
+    val events = homeViewModel.events
+    val state = homeViewModel.state
 
     var showTaskCard by remember { mutableStateOf(false) }
+    val loggedState = sessionViewModel.logged.collectAsState()
+
+    LaunchedEffect(loggedState.value) {
+        if (!loggedState.value) {
+            navController.navigate(Screen.Login.route) {
+                popUpTo(Screen.Home.route) { inclusive = true }
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
-        viewModel.events.collect { event ->
+        homeViewModel.events.collect { event ->
             when (event) {
                 is HomeEvent.LogoutSuccess -> {
                     navController.navigate(Screen.Login.route) {
@@ -59,7 +71,7 @@ fun HomeScreen(
             TopAppBar(
                 title = { Text("To Do List") },
                 actions = {
-                    IconButton(onClick = { viewModel.logOut() }) {
+                    IconButton(onClick = { homeViewModel.logOut() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ExitToApp,
                             contentDescription = "Logout"
@@ -79,7 +91,7 @@ fun HomeScreen(
                 task = state.editingTask,
                 onDismiss = {
                     showTaskCard = false
-                    viewModel.setEditingTask(null)
+                    homeViewModel.setEditingTask(null)
                 }
             )
         }
@@ -87,9 +99,9 @@ fun HomeScreen(
         Box(modifier = Modifier.padding(innerPadding)) {
             TaskList(
                 state,
-                onEdit = { viewModel.setEditingTask(it) },
-                onDelete = { viewModel.deleteTask(it.id) },
-                onToggleStatus = viewModel::toggleTaskStatus
+                onEdit = { homeViewModel.setEditingTask(it) },
+                onDelete = { homeViewModel.deleteTask(it.id) },
+                onToggleStatus = homeViewModel::toggleTaskStatus
             )
         }
     }

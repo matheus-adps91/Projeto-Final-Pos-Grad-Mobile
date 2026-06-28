@@ -4,6 +4,7 @@ import com.neptum.todolistapp.data.datasource.FireauthDataSource
 import com.neptum.todolistapp.data.datasource.FirebaseDataSource
 import com.neptum.todolistapp.data.repository.FireauthUserRepository
 import com.neptum.todolistapp.data.repository.FirebaseTaskRepositoryImpl
+import com.neptum.todolistapp.data.repository.SessionRepository
 import com.neptum.todolistapp.domain.usecase.LogInUseCase
 import com.neptum.todolistapp.domain.usecase.LogOutUseCase
 import com.neptum.todolistapp.domain.usecase.task.DeleteTaskUseCase
@@ -17,6 +18,7 @@ import com.neptum.todolistapp.repository.UserRepository
 import com.neptum.todolistapp.ui.home.HomeViewModel
 import com.neptum.todolistapp.ui.login.LoginViewModel
 import com.neptum.todolistapp.ui.recoverPassword.RecoverPasswordViewModel
+import com.neptum.todolistapp.ui.session.SessionViewModel
 import com.neptum.todolistapp.ui.signup.SignUpViewModel
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
@@ -34,6 +36,12 @@ val appModule = module {
     single<TaskRepository> {
         FirebaseTaskRepositoryImpl(
             get(),
+            get<FireauthDataSource>().auth
+        )
+    }
+
+    single<SessionRepository> {
+        SessionRepository(
             get<FireauthDataSource>().auth
         )
     }
@@ -73,11 +81,16 @@ val appModule = module {
             get(),
             get(),
             get(),
-            get())
+            get()
+        )
     }
 
     viewModel {
         RecoverPasswordViewModel(get())
+    }
+
+    viewModel {
+        SessionViewModel(get())
     }
 
 }
