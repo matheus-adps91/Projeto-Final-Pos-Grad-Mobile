@@ -15,13 +15,16 @@ import com.neptum.todolistapp.domain.usecase.task.InsertTaskUseCase
 import com.neptum.todolistapp.domain.usecase.task.UpdateTaskUseCase
 import com.neptum.todolistapp.domain.usecase.user.CreateUserUseCase
 import com.neptum.todolistapp.domain.usecase.user.RecoverUserPasswordUseCase
+import com.neptum.todolistapp.domain.usecase.userpreference.GetThemeUserPreferenceUseCase
 import com.neptum.todolistapp.domain.usecase.userpreference.GetUserPreferenceUseCase
 import com.neptum.todolistapp.domain.usecase.userpreference.InsertNameUserPrefenceUseCase
+import com.neptum.todolistapp.domain.usecase.userpreference.InsertThemeUserPreferenceUseCase
 import com.neptum.todolistapp.repository.TaskRepository
 import com.neptum.todolistapp.repository.UserPreferenceRepository
 import com.neptum.todolistapp.repository.UserRepository
 import com.neptum.todolistapp.ui.home.HomeViewModel
 import com.neptum.todolistapp.ui.login.LoginViewModel
+import com.neptum.todolistapp.ui.preferences.ThemePreferenceViewModel
 import com.neptum.todolistapp.ui.preferences.UserPreferenceViewModel
 import com.neptum.todolistapp.ui.recoverPassword.RecoverPasswordViewModel
 import com.neptum.todolistapp.ui.session.SessionViewModel
@@ -30,7 +33,6 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel
-import org.koin.core.scope.get
 import org.koin.dsl.module
 
 val appModule = module {
@@ -92,7 +94,15 @@ val appModule = module {
     factory {
         InsertNameUserPrefenceUseCase(get())
     }
-    
+
+    factory {
+        InsertThemeUserPreferenceUseCase(get())
+    }
+
+    factory {
+        GetUserPreferenceUseCase(get())
+    }
+
     viewModel {
         SignUpViewModel(get())
     }
@@ -123,6 +133,13 @@ val appModule = module {
             get(),
             get(),
             get()
+        )
+    }
+
+    viewModel {
+        ThemePreferenceViewModel(
+            InsertThemeUserPreferenceUseCase(get()),
+            GetThemeUserPreferenceUseCase(get())
         )
     }
 

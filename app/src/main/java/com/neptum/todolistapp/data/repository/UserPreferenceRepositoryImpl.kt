@@ -20,6 +20,6 @@ class UserPreferenceRepositoryImpl(
     }
 
     override suspend fun saveTheme(theme: AppTheme) {
-        TODO("Not yet implemented")
+        userPreferencesDataStore.saveTheme(theme)
     }
 }

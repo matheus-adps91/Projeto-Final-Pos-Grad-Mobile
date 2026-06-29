@@ -38,7 +38,10 @@ class UserPreferencesDataStore(
 
     }
 
-    fun saveTheme() {
+    suspend fun saveTheme(theme: AppTheme) {
+        context.dataStore.edit { preferences ->
+            preferences[DATA_THEME] = theme.name
+        }
 
     }
 }

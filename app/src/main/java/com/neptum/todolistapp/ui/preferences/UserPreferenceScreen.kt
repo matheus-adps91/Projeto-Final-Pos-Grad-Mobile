@@ -47,6 +47,7 @@ fun UserPreferenceScreen(
     navController: NavController,
     paddingValues: PaddingValues,
     userPreferenceViewModel: UserPreferenceViewModel = koinViewModel(),
+    themePreferenceViewModel: ThemePreferenceViewModel = koinViewModel()
 ) {
     val preferences by userPreferenceViewModel.preferences.collectAsState()
     var name by remember { mutableStateOf("") }
@@ -179,9 +180,7 @@ fun UserPreferenceScreen(
                             ) {
                                 RadioButton(
                                     selected = preferences?.theme == theme,
-                                    onClick = {
-                                        //onThemeSelected(theme)
-                                    }
+                                    onClick = { themePreferenceViewModel.saveTheme(theme) }
                                 )
                                 Text(theme.name)
                             }

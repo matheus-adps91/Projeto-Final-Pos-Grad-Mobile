@@ -15,8 +15,8 @@ import kotlinx.coroutines.launch
 
 class UserPreferenceViewModel(
     private val getUserPreferenceUseCase: GetUserPreferenceUseCase,
-    private val insertNameUserPrefenceUseCase: InsertNameUserPrefenceUseCase,
-    private val logOutUseCase: LogOutUseCase
+    private val insertNameUserPreferenceUseCase: InsertNameUserPrefenceUseCase,
+    private val logOutUseCase: LogOutUseCase,
 ): ViewModel() {
 
     private val _events = MutableSharedFlow<PreferencesEvent>()
@@ -31,7 +31,7 @@ class UserPreferenceViewModel(
 
     fun saveName(name: String) {
         viewModelScope.launch {
-            insertNameUserPrefenceUseCase(name)
+            insertNameUserPreferenceUseCase(name)
         }
     }
 
