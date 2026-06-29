@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -24,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.neptum.todolistapp.ui.Screen
 import com.neptum.todolistapp.ui.components.TaskFormCard
+import com.neptum.todolistapp.ui.preferences.UserPreferenceScreen
 import com.neptum.todolistapp.ui.screen.TaskList
 import com.neptum.todolistapp.ui.session.SessionViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -51,30 +53,26 @@ fun HomeScreen(
     }
 
     LaunchedEffect(Unit) {
-        homeViewModel.events.collect { event ->
+        events.collect { event ->
             when (event) {
-                is HomeEvent.LogoutSuccess -> {
-                    navController.navigate(Screen.Login.route) {
-                        popUpTo(Screen.Home.route) { inclusive = true }
-                    }
-                }
                 is HomeEvent.TaskSaved -> {
                     // Opcional: Mostrar uma mensagem de sucesso ou log
                 }
             }
         }
     }
-
     Scaffold(
         modifier = Modifier.padding(paddingValues),
         topBar = {
             TopAppBar(
                 title = { Text("To Do List") },
                 actions = {
-                    IconButton(onClick = { homeViewModel.logOut() }) {
+                    IconButton(
+                        onClick = { navController.navigate(Screen.Preferences.route) }
+                    ) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
-                            contentDescription = "Logout"
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Preferências"
                         )
                     }
                 }

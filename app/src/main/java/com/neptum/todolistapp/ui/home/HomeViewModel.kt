@@ -6,11 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.neptum.todolistapp.domain.model.Task
-import com.neptum.todolistapp.domain.usecase.LogOutUseCase
+import com.neptum.todolistapp.domain.usecase.task.DeleteTaskUseCase
 import com.neptum.todolistapp.domain.usecase.task.GetTaskUseCase
 import com.neptum.todolistapp.domain.usecase.task.InsertTaskUseCase
 import com.neptum.todolistapp.domain.usecase.task.UpdateTaskUseCase
-import com.neptum.todolistapp.domain.usecase.task.DeleteTaskUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -18,7 +17,6 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 class HomeViewModel(
-    private val logOutUseCase: LogOutUseCase,
     private val insertTaskUseCase: InsertTaskUseCase,
     private val getTaskUseCase: GetTaskUseCase,
     private val updateTaskUseCase: UpdateTaskUseCase,
@@ -92,16 +90,8 @@ class HomeViewModel(
         }
     }
 
-    fun logOut() {
-        viewModelScope.launch {
-            logOutUseCase().onSuccess {
-                _events.emit(HomeEvent.LogoutSuccess)
-            }
-        }
-    }
 }
 
 sealed interface HomeEvent {
-    object LogoutSuccess : HomeEvent
     object TaskSaved : HomeEvent
 }

@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.neptum.todolistapp.ui.home.HomeScreen
 import com.neptum.todolistapp.ui.login.LoginScreen
+import com.neptum.todolistapp.ui.preferences.UserPreferenceScreen
 import com.neptum.todolistapp.ui.recoverPassword.RecoverPassword
 import com.neptum.todolistapp.ui.session.SplashScreen
 import com.neptum.todolistapp.ui.signup.SignUpScreen
@@ -52,6 +53,13 @@ fun AppNavigation(
         composable(Screen.Splash.route) {
             SplashScreen(
                 navController
+            )
+        }
+
+        composable(Screen.Preferences.route) {
+            UserPreferenceScreen(
+                navController,
+                paddingValues = innerPadding,
             )
         }
     }

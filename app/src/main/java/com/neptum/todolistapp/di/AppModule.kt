@@ -2,9 +2,11 @@ package com.neptum.todolistapp.di
 
 import com.neptum.todolistapp.data.datasource.FireauthDataSource
 import com.neptum.todolistapp.data.datasource.FirebaseDataSource
+import com.neptum.todolistapp.data.datastore.UserPreferencesDataStore
 import com.neptum.todolistapp.data.repository.FireauthUserRepository
 import com.neptum.todolistapp.data.repository.FirebaseTaskRepositoryImpl
 import com.neptum.todolistapp.data.repository.SessionRepository
+import com.neptum.todolistapp.data.repository.UserPreferenceRepositoryImpl
 import com.neptum.todolistapp.domain.usecase.LogInUseCase
 import com.neptum.todolistapp.domain.usecase.LogOutUseCase
 import com.neptum.todolistapp.domain.usecase.task.DeleteTaskUseCase
@@ -13,16 +15,22 @@ import com.neptum.todolistapp.domain.usecase.task.InsertTaskUseCase
 import com.neptum.todolistapp.domain.usecase.task.UpdateTaskUseCase
 import com.neptum.todolistapp.domain.usecase.user.CreateUserUseCase
 import com.neptum.todolistapp.domain.usecase.user.RecoverUserPasswordUseCase
+import com.neptum.todolistapp.domain.usecase.userpreference.GetUserPreferenceUseCase
+import com.neptum.todolistapp.domain.usecase.userpreference.InsertNameUserPrefenceUseCase
 import com.neptum.todolistapp.repository.TaskRepository
+import com.neptum.todolistapp.repository.UserPreferenceRepository
 import com.neptum.todolistapp.repository.UserRepository
 import com.neptum.todolistapp.ui.home.HomeViewModel
 import com.neptum.todolistapp.ui.login.LoginViewModel
+import com.neptum.todolistapp.ui.preferences.UserPreferenceViewModel
 import com.neptum.todolistapp.ui.recoverPassword.RecoverPasswordViewModel
 import com.neptum.todolistapp.ui.session.SessionViewModel
 import com.neptum.todolistapp.ui.signup.SignUpViewModel
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel
+import org.koin.core.scope.get
 import org.koin.dsl.module
 
 val appModule = module {
@@ -30,7 +38,10 @@ val appModule = module {
     singleOf(::FireauthDataSource)
 
     single<UserRepository> {
-        FireauthUserRepository(get(), get())
+        FireauthUserRepository(
+            get(),
+            get()
+        )
     }
 
     single<TaskRepository> {
@@ -45,6 +56,16 @@ val appModule = module {
             get<FireauthDataSource>().auth
         )
     }
+    
+    single<UserPreferenceRepository> {
+        UserPreferenceRepositoryImpl(
+            get<UserPreferencesDataStore>()
+        )
+    }
+
+    single {
+        UserPreferencesDataStore(androidContext())
+    }
 
     factoryOf(::CreateUserUseCase)
     factoryOf(::LogInUseCase)
@@ -54,6 +75,7 @@ val appModule = module {
     factoryOf(::UpdateTaskUseCase)
     factoryOf(::DeleteTaskUseCase)
     factoryOf(::RecoverUserPasswordUseCase)
+    factoryOf(::GetUserPreferenceUseCase)
 
     factory {
         UpdateTaskUseCase(get())
@@ -67,6 +89,10 @@ val appModule = module {
         RecoverUserPasswordUseCase(get())
     }
 
+    factory {
+        InsertNameUserPrefenceUseCase(get())
+    }
+    
     viewModel {
         SignUpViewModel(get())
     }
@@ -80,7 +106,6 @@ val appModule = module {
             get(),
             get(),
             get(),
-            get(),
             get()
         )
     }
@@ -91,6 +116,14 @@ val appModule = module {
 
     viewModel {
         SessionViewModel(get())
+    }
+    
+    viewModel {
+        UserPreferenceViewModel(
+            get(),
+            get(),
+            get()
+        )
     }
 
 }
